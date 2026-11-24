@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 26.2.5.1 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		pre { background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "NSimSun", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre class="western">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot; /&gt;
+  &lt;title&gt;HemaLab — Blood Type &amp; Compatibility Quiz&lt;/title&gt;
+  &lt;style&gt;
+    :root {
+      --bg-dark: #0b1320;
+      --panel-bg: #111c2e;
+      --card-bg: #16243b;
+      --border-color: #243b5e;
+      --accent-cyan: #00d4ff;
+      --accent-teal: #0ea5e9;
+      --blood-red: #dc2626;
+      --blood-dark: #7f1d1d;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --correct: #10b981;
+      --wrong: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(rgba(0, 212, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, #09101c, #0f1b2e);
+      background-size: 24px 24px, 100% 100%;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .lab-terminal {
+      width: 100%;
+      max-width: 720px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 212, 255, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header Bar */
+    .lab-header {
+      background: #0d1626;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .lab-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      font-size: 1.1rem;
+      color: var(--accent-cyan);
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--correct);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--correct);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 5px 12px;
+      border-radius: 20px;
+      color: var(--text-main);
+    }
+
+    .badge span {
+      color: var(--accent-cyan);
+    }
+
+    /* Progress Bar */
+    .progress-track {
+      width: 100%;
+      height: 5px;
+      background: #0a111e;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-cyan));
+      transition: width 0.35s ease;
+    }
+
+    /* Main Content */
+    .lab-body {
+      padding: 24px;
+    }
+
+    .step-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-cyan);
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 18px;
+    }
+
+    /* Visual Specimen Slide Area */
+    .specimen-stage {
+      background: #0c1524;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slide-legend {
+      display: flex;
+      gap: 20px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot-smooth {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #dc2626;
+      display: inline-block;
+    }
+
+    .dot-clump {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #7f1d1d 35%, #fca5a5 40%, #991b1b 75%);
+      display: inline-block;
+    }
+
+    /* Donation Banner Visual for Odd-to-Even Follow-up Questions */
+    .donor-banner {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(14, 165, 233, 0.1));
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .blood-bag-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(220, 38, 38, 0.2);
+      border: 2px solid #ef4444;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fca5a5;
+      flex-shrink: 0;
+    }
+
+    .donor-info h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fca5a5;
+      margin-bottom: 4px;
+    }
+
+    .donor-info p {
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    /* Choices Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 560px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent-cyan);
+      background: #1d304f;
+      transform: translateY(-1px);
+    }
+
+    .option-key {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent-cyan);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: var(--correct);
+      color: #a7f3d0;
+    }
+
+    .option-btn.correct .option-key {
+      background: var(--correct);
+      color: #064e3b;
+    }
+
+    .option-btn.wrong {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: var(--wrong);
+      color: #fecaca;
+    }
+
+    .option-btn.wrong .option-key {
+      background: var(--wrong);
+      color: #fff;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* Feedback Box */
+    .feedback-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box.correct-fb {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #d1fae5;
+    }
+
+    .feedback-box.wrong-fb {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fee2e2;
+    }
+
+    /* Footer Controls */
+    .lab-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .next-btn {
+      background: linear-gradient(90deg, var(--accent-teal), var(--accent-cyan));
+      color: #061220;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
+      transition: opacity 0.2s;
+    }
+
+    .next-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Results Screen */
+    .results-screen {
+      text-align: center;
+      padding: 36px 24px;
+      display: none;
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--accent-cyan);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      background: rgba(0, 212, 255, 0.08);
+      box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
+    }
+
+    .score-circle .big-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+
+    .score-circle .small-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .restart-btn {
+      margin-top: 24px;
+      background: var(--accent-cyan);
+      color: #061220;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;lab-terminal&quot;&gt;
+  &lt;div class=&quot;lab-header&quot;&gt;
+    &lt;div class=&quot;lab-brand&quot;&gt;
+      &lt;div class=&quot;pulse-dot&quot;&gt;&lt;/div&gt;
+      &lt;span&gt;HEMALAB DIAGNOSTICS // SEROLOGY UNIT&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;status-badges&quot;&gt;
+      &lt;div class=&quot;badge&quot;&gt;Sample: &lt;span id=&quot;q-counter&quot;&gt;1 / 10&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;badge&quot;&gt;Score: &lt;span id=&quot;score-counter&quot;&gt;0&lt;/span&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;progress-track&quot;&gt;
+    &lt;div class=&quot;progress-fill&quot; id=&quot;progress-fill&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;lab-body&quot; id=&quot;quiz-screen&quot;&gt;
+    &lt;div class=&quot;step-tag&quot; id=&quot;step-tag&quot;&gt;PHASE 1A: AGGLUTINATION ASSAY&lt;/div&gt;
+    &lt;div class=&quot;question-text&quot; id=&quot;question-text&quot;&gt;Identify the blood type shown on the laboratory slide below:&lt;/div&gt;
+
+    &lt;div id=&quot;visual-container&quot;&gt;&lt;/div&gt;
+
+    &lt;div class=&quot;options-grid&quot; id=&quot;options-grid&quot;&gt;&lt;/div&gt;
+
+    &lt;div class=&quot;feedback-box&quot; id=&quot;feedback-box&quot;&gt;&lt;/div&gt;
+
+    &lt;div class=&quot;lab-footer&quot;&gt;
+      &lt;button class=&quot;next-btn&quot; id=&quot;next-btn&quot; onclick=&quot;nextQuestion()&quot;&gt;Next Lab Step →&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;results-screen&quot; id=&quot;results-screen&quot;&gt;
+    &lt;div class=&quot;score-circle&quot;&gt;
+      &lt;div class=&quot;big-num&quot; id=&quot;final-score&quot;&gt;0/10&lt;/div&gt;
+      &lt;div class=&quot;small-label&quot;&gt;Accuracy&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;h2 id=&quot;result-title&quot; style=&quot;margin-bottom: 10px;&quot;&gt;Diagnostic Complete&lt;/h2&gt;
+    &lt;p id=&quot;result-desc&quot; style=&quot;color: var(--text-muted); max-width: 480px; margin: 0 auto;&quot;&gt;&lt;/p&gt;
+    &lt;button class=&quot;restart-btn&quot; onclick=&quot;restartQuiz()&quot;&gt;Run New Lab Panel&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  // Generates an authentic glass lab slide SVG with Anti-A, Anti-B, and Anti-D wells
+  function createBloodSlideSVG(antiA, antiB, antiD, sampleId) {
+    function renderWell(cx, label, isClumped) {
+      let bloodGraphic = '';
+      if (isClumped) {
+        // Agglutinated (clumped) red blood cells in clear plasma
+        bloodGraphic = `
+          &lt;circle cx=&quot;${cx}&quot; cy=&quot;68&quot; r=&quot;26&quot; fill=&quot;#3a161d&quot; stroke=&quot;#64748b&quot; stroke-width=&quot;1.5&quot;/&gt;
+          &lt;circle cx=&quot;${cx}&quot; cy=&quot;68&quot; r=&quot;24&quot; fill=&quot;#e2e8f0&quot; fill-opacity=&quot;0.22&quot;/&gt;
+          &lt;circle cx=&quot;${cx - 9}&quot; cy=&quot;60&quot; r=&quot;5.5&quot; fill=&quot;#991b1b&quot;/&gt;
+          &lt;circle cx=&quot;${cx + 8}&quot; cy=&quot;58&quot; r=&quot;6&quot; fill=&quot;#7f1d1d&quot;/&gt;
+          &lt;circle cx=&quot;${cx - 3}&quot; cy=&quot;71&quot; r=&quot;6.5&quot; fill=&quot;#b91c1c&quot;/&gt;
+          &lt;circle cx=&quot;${cx + 10}&quot; cy=&quot;74&quot; r=&quot;5&quot; fill=&quot;#991b1b&quot;/&gt;
+          &lt;circle cx=&quot;${cx - 11}&quot; cy=&quot;76&quot; r=&quot;4.5&quot; fill=&quot;#7f1d1d&quot;/&gt;
+          &lt;circle cx=&quot;${cx + 1}&quot; cy=&quot;57&quot; r=&quot;4&quot; fill=&quot;#dc2626&quot;/&gt;
+          &lt;circle cx=&quot;${cx + 3}&quot; cy=&quot;81&quot; r=&quot;4.5&quot; fill=&quot;#7f1d1d&quot;/&gt;
+        `;
+      } else {
+        // Smooth, uniform suspension (no reaction)
+        bloodGraphic = `
+          &lt;circle cx=&quot;${cx}&quot; cy=&quot;68&quot; r=&quot;26&quot; fill=&quot;#dc2626&quot; stroke=&quot;#64748b&quot; stroke-width=&quot;1.5&quot;/&gt;
+          &lt;ellipse cx=&quot;${cx - 7}&quot; cy=&quot;59&quot; rx=&quot;7&quot; ry=&quot;4&quot; transform=&quot;rotate(-25 ${cx - 7} 59)&quot; fill=&quot;#f87171&quot; fill-opacity=&quot;0.45&quot;/&gt;
+        `;
+      }
+
+      return `
+        &lt;g&gt;
+          &lt;text x=&quot;${cx}&quot; y=&quot;30&quot; text-anchor=&quot;middle&quot; fill=&quot;#cbd5e1&quot; font-size=&quot;12&quot; font-weight=&quot;700&quot; letter-spacing=&quot;0.5&quot;&gt;${label}&lt;/text&gt;
+          ${bloodGraphic}
+          &lt;text x=&quot;${cx}&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; fill=&quot;${isClumped ? '#fca5a5' : '#94a3b8'}&quot; font-size=&quot;10&quot; font-weight=&quot;600&quot;&gt;
+            ${isClumped ? 'CLUMPED (+)' : 'SMOOTH (-)'}
+          &lt;/text&gt;
+        &lt;/g&gt;
+      `;
+    }
+
+    return `
+      &lt;div class=&quot;specimen-stage&quot;&gt;
+        &lt;svg viewBox=&quot;0 0 380 128&quot; width=&quot;100%&quot; style=&quot;max-width: 440px; height: auto;&quot;&gt;
+          &lt;!-- Glass Microscope Slide Base --&gt;
+          &lt;rect x=&quot;6&quot; y=&quot;8&quot; width=&quot;368&quot; height=&quot;112&quot; rx=&quot;12&quot; fill=&quot;rgba(148, 163, 184, 0.12)&quot; stroke=&quot;rgba(148, 163, 184, 0.45)&quot; stroke-width=&quot;2&quot;/&gt;
+          &lt;!-- Frosted Label Area --&gt;
+          &lt;rect x=&quot;14&quot; y=&quot;16&quot; width=&quot;54&quot; height=&quot;96&quot; rx=&quot;6&quot; fill=&quot;rgba(255, 255, 255, 0.08)&quot; stroke=&quot;rgba(255,255,255,0.15)&quot;/&gt;
+          &lt;text x=&quot;41&quot; y=&quot;55&quot; text-anchor=&quot;middle&quot; fill=&quot;#00d4ff&quot; font-size=&quot;10&quot; font-weight=&quot;700&quot;&gt;SAMPLE&lt;/text&gt;
+          &lt;text x=&quot;41&quot; y=&quot;72&quot; text-anchor=&quot;middle&quot; fill=&quot;#f8fafc&quot; font-size=&quot;12&quot; font-weight=&quot;800&quot;&gt;${sampleId}&lt;/text&gt;
+
+          ${renderWell(122, 'ANTI-A', antiA)}
+          ${renderWell(214, 'ANTI-B', antiB)}
+          ${renderWell(306, 'ANTI-D (Rh)', antiD)}
+        &lt;/svg&gt;
+        &lt;div class=&quot;slide-legend&quot;&gt;
+          &lt;div class=&quot;legend-item&quot;&gt;&lt;span class=&quot;dot-clump&quot;&gt;&lt;/span&gt; Agglutination = Antigen Present (+)&lt;/div&gt;
+          &lt;div class=&quot;legend-item&quot;&gt;&lt;span class=&quot;dot-smooth&quot;&gt;&lt;/span&gt; Smooth Mix = Antigen Absent (-)&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    `;
+  }
+
+  // 10-Question Lab Dataset: 5 pairs of [Blood Test Identification -&gt; Exact Donation Recipients]
+  const questions = [
+    // PAIR 1: A+
+    {
+      type: &quot;test&quot;,
+      tag: &quot;SAMPLE #01 — AGGLUTINATION TEST&quot;,
+      question: &quot;Examine the reagent slide below. Which blood type does Sample #01 have?&quot;,
+      slide: { a: true, b: false, d: true, id: &quot;#01&quot; },
+      options: [&quot;A+&quot;, &quot;A-&quot;, &quot;B+&quot;, &quot;AB+&quot;],
+      correct: 0,
+      explanation: &quot;Clumping in Anti-A indicates A antigens; smooth Anti-B means no B antigens; clumping in Anti-D confirms Rh-positive (A+).&quot;
+    },
+    {
+      type: &quot;donate&quot;,
+      tag: &quot;SAMPLE #01 — TRANSFUSION MATCHING&quot;,
+      donorType: &quot;A+&quot;,
+      question: &quot;Sample #01 was identified as A+. Which exact blood types can an A+ donor safely donate red blood cells to?&quot;,
+      options: [
+        &quot;A+ and AB+&quot;,
+        &quot;A+, A-, AB+, and AB-&quot;,
+        &quot;A+ and O+&quot;,
+        &quot;A+, B+, and AB+&quot;
+      ],
+      correct: 0,
+      explanation: &quot;A+ blood contains both A and Rh antigens, so it can only be given to recipients who already have A and Rh antigens: A+ and AB+.&quot;
+    },
+
+    // PAIR 2: O-
+    {
+      type: &quot;test&quot;,
+      tag: &quot;SAMPLE #02 — AGGLUTINATION TEST&quot;,
+      question: &quot;Examine the reagent slide below. Which blood type does Sample #02 have?&quot;,
+      slide: { a: false, b: false, d: false, id: &quot;#02&quot; },
+      options: [&quot;O-&quot;, &quot;O+&quot;, &quot;AB-&quot;, &quot;A-&quot;],
+      correct: 0,
+      explanation: &quot;No agglutination occurs in Anti-A, Anti-B, or Anti-D, meaning no A, B, or Rh antigens are present on the red blood cells (O-).&quot;
+    },
+    {
+      type: &quot;donate&quot;,
+      tag: &quot;SAMPLE #02 — TRANSFUSION MATCHING&quot;,
+      donorType: &quot;O-&quot;,
+      question: &quot;Sample #02 was identified as O-. Which exact blood types can an O- donor safely donate red blood cells to?&quot;,
+      options: [
+        &quot;All 8 blood types (O-, O+, A-, A+, B-, B+, AB-, AB+)&quot;,
+        &quot;Only O- and O+&quot;,
+        &quot;Only O-, A-, B-, and AB-&quot;,
+        &quot;Only O-&quot;
+      ],
+      correct: 0,
+      explanation: &quot;Because O- red blood cells lack A, B, and Rh antigens, they will not trigger an immune reaction in any recipient—making O- the universal red cell donor.&quot;
+    },
+
+    // PAIR 3: B-
+    {
+      type: &quot;test&quot;,
+      tag: &quot;SAMPLE #03 — AGGLUTINATION TEST&quot;,
+      question: &quot;Examine the reagent slide below. Which blood type does Sample #03 have?&quot;,
+      slide: { a: false, b: true, d: false, id: &quot;#03&quot; },
+      options: [&quot;B-&quot;, &quot;B+&quot;, &quot;AB-&quot;, &quot;O-&quot;],
+      correct: 0,
+      explanation: &quot;Agglutination occurs only in the Anti-B well while Anti-A and Anti-D remain smooth, identifying this sample as B-.&quot;
+    },
+    {
+      type: &quot;donate&quot;,
+      tag: &quot;SAMPLE #03 — TRANSFUSION MATCHING&quot;,
+      donorType: &quot;B-&quot;,
+      question: &quot;Sample #03 was identified as B-. Which exact blood types can a B- donor safely donate red blood cells to?&quot;,
+      options: [
+        &quot;B-, B+, AB-, and AB+&quot;,
+        &quot;B- and AB-&quot;,
+        &quot;B- and B+&quot;,
+        &quot;B-, O-, and AB-&quot;
+      ],
+      correct: 0,
+      explanation: &quot;B- has B antigens and is Rh-negative, so it can donate to both Rh-negative and Rh-positive recipients who carry the B antigen: B-, B+, AB-, and AB+.&quot;
+    },
+
+    // PAIR 4: AB+
+    {
+      type: &quot;test&quot;,
+      tag: &quot;SAMPLE #04 — AGGLUTINATION TEST&quot;,
+      question: &quot;Examine the reagent slide below. Which blood type does Sample #04 have?&quot;,
+      slide: { a: true, b: true, d: true, id: &quot;#04&quot; },
+      options: [&quot;AB+&quot;, &quot;AB-&quot;, &quot;A+&quot;, &quot;B+&quot;],
+      correct: 0,
+      explanation: &quot;All three wells (Anti-A, Anti-B, and Anti-D) show strong agglutination, indicating A, B, and Rh antigens are all present (AB+).&quot;
+    },
+    {
+      type: &quot;donate&quot;,
+      tag: &quot;SAMPLE #04 — TRANSFUSION MATCHING&quot;,
+      donorType: &quot;AB+&quot;,
+      question: &quot;Sample #04 was identified as AB+. Which exact blood types can an AB+ donor safely donate red blood cells to?&quot;,
+      options: [
+        &quot;Only AB+&quot;,
+        &quot;AB+ and AB-&quot;,
+        &quot;A+, B+, and AB+&quot;,
+        &quot;All 8 blood types&quot;
+      ],
+      correct: 0,
+      explanation: &quot;AB+ red blood cells carry A, B, and Rh antigens. Only AB+ recipients possess all three without producing antibodies against them.&quot;
+    },
+
+    // PAIR 5: O+
+    {
+      type: &quot;test&quot;,
+      tag: &quot;SAMPLE #05 — AGGLUTINATION TEST&quot;,
+      question: &quot;Examine the reagent slide below. Which blood type does Sample #05 have?&quot;,
+      slide: { a: false, b: false, d: true, id: &quot;#05&quot; },
+      options: [&quot;O+&quot;, &quot;O-&quot;, &quot;B+&quot;, &quot;A+&quot;],
+      correct: 0,
+      explanation: &quot;Anti-A and Anti-B remain smooth (Type O), while Anti-D shows clumping (Rh-positive), making Sample #05 type O+.&quot;
+    },
+    {
+      type: &quot;donate&quot;,
+      tag: &quot;SAMPLE #05 — TRANSFUSION MATCHING&quot;,
+      donorType: &quot;O+&quot;,
+      question: &quot;Sample #05 was identified as O+. Which exact blood types can an O+ donor safely donate red blood cells to?&quot;,
+      options: [
+        &quot;O+, A+, B+, and AB+&quot;,
+        &quot;O+ and O-&quot;,
+        &quot;All 8 blood types&quot;,
+        &quot;O+ and AB+&quot;
+      ],
+      correct: 0,
+      explanation: &quot;O+ lacks A and B antigens but carries the Rh (+) antigen, so it can donate to any Rh-positive blood type: O+, A+, B+, and AB+.&quot;
+    }
+  ];
+
+  let currentIdx = 0;
+  let score = 0;
+  let answered = false;
+
+  const qCounterEl = document.getElementById(&quot;q-counter&quot;);
+  const scoreCounterEl = document.getElementById(&quot;score-counter&quot;);
+  const progressFillEl = document.getElementById(&quot;progress-fill&quot;);
+  const stepTagEl = document.getElementById(&quot;step-tag&quot;);
+  const questionTextEl = document.getElementById(&quot;question-text&quot;);
+  const visualContainerEl = document.getElementById(&quot;visual-container&quot;);
+  const optionsGridEl = document.getElementById(&quot;options-grid&quot;);
+  const feedbackBoxEl = document.getElementById(&quot;feedback-box&quot;);
+  const nextBtnEl = document.getElementById(&quot;next-btn&quot;);
+
+  function loadQuestion() {
+    answered = false;
+    const q = questions[currentIdx];
+
+    qCounterEl.textContent = `${currentIdx + 1} / ${questions.length}`;
+    progressFillEl.style.width = `${((currentIdx + 1) / questions.length) * 100}%`;
+    stepTagEl.textContent = q.tag;
+    questionTextEl.textContent = q.question;
+
+    // Render top visual (either blood test slide or donor reference card)
+    if (q.type === &quot;test&quot;) {
+      visualContainerEl.innerHTML = createBloodSlideSVG(q.slide.a, q.slide.b, q.slide.d, q.slide.id);
+    } else {
+      visualContainerEl.innerHTML = `
+        &lt;div class=&quot;donor-banner&quot;&gt;
+          &lt;div class=&quot;blood-bag-icon&quot;&gt;${q.donorType}&lt;/div&gt;
+          &lt;div class=&quot;donor-info&quot;&gt;
+            &lt;h4&gt;Confirmed Donor Unit&lt;/h4&gt;
+            &lt;p&gt;Select the exact compatible recipient group(s) for &lt;strong&gt;${q.donorType}&lt;/strong&gt; red blood cells.&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      `;
+    }
+
+    // Reset feedback and next button
+    feedbackBoxEl.className = &quot;feedback-box&quot;;
+    feedbackBoxEl.innerHTML = &quot;&quot;;
+    nextBtnEl.style.display = &quot;none&quot;;
+    nextBtnEl.textContent = currentIdx === questions.length - 1 ? &quot;View Lab Report →&quot; : &quot;Next Lab Step →&quot;;
+
+    // Render answer choices
+    const letters = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;];
+    optionsGridEl.innerHTML = &quot;&quot;;
+    q.options.forEach((opt, idx) =&gt; {
+      const btn = document.createElement(&quot;button&quot;);
+      btn.className = &quot;option-btn&quot;;
+      btn.innerHTML = `&lt;span class=&quot;option-key&quot;&gt;${letters[idx]}&lt;/span&gt;&lt;span&gt;${opt}&lt;/span&gt;`;
+      btn.onclick = () =&gt; selectAnswer(idx, btn);
+      optionsGridEl.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(selectedIdx, selectedBtn) {
+    if (answered) return;
+    answered = true;
+
+    const q = questions[currentIdx];
+    const allBtns = optionsGridEl.querySelectorAll(&quot;.option-btn&quot;);
+    allBtns.forEach(b =&gt; b.disabled = true);
+
+    if (selectedIdx === q.correct) {
+      score++;
+      scoreCounterEl.textContent = score;
+      selectedBtn.classList.add(&quot;correct&quot;);
+      feedbackBoxEl.className = &quot;feedback-box show correct-fb&quot;;
+      feedbackBoxEl.innerHTML = `&lt;strong&gt;✓ Verified Match:&lt;/strong&gt; ${q.explanation}`;
+    } else {
+      selectedBtn.classList.add(&quot;wrong&quot;);
+      allBtns[q.correct].classList.add(&quot;correct&quot;);
+      feedbackBoxEl.className = &quot;feedback-box show wrong-fb&quot;;
+      feedbackBoxEl.innerHTML = `&lt;strong&gt;✕ Lab Alert:&lt;/strong&gt; ${q.explanation}`;
+    }
+
+    nextBtnEl.style.display = &quot;inline-block&quot;;
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx &lt; questions.length) {
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  function showResults() {
+    document.getElementById(&quot;quiz-screen&quot;).style.display = &quot;none&quot;;
+    const resultsScreen = document.getElementById(&quot;results-screen&quot;);
+    resultsScreen.style.display = &quot;block&quot;;
+    document.getElementById(&quot;final-score&quot;).textContent = `${score}/${questions.length}`;
+
+    const titleEl = document.getElementById(&quot;result-title&quot;);
+    const descEl = document.getElementById(&quot;result-desc&quot;);
+
+    if (score &gt;= 9) {
+      titleEl.textContent = &quot;Senior Hematologist Status&quot;;
+      descEl.textContent = &quot;Outstanding precision! You accurately interpreted all agglutination assays and transfusion compatibility rules.&quot;;
+    } else if (score &gt;= 6) {
+      titleEl.textContent = &quot;Certified Lab Technician&quot;;
+      descEl.textContent = &quot;Solid diagnostic work. Review the Rh (+/-) antigen compatibility rules to reach 100% accuracy.&quot;;
+    } else {
+      titleEl.textContent = &quot;Lab Trainee — Review Recommended&quot;;
+      descEl.textContent = &quot;Remember: Clumping (+) means that antigen is present, and donors cannot give antigens to recipients who lack them.&quot;;
+    }
+  }
+
+  function restartQuiz() {
+    currentIdx = 0;
+    score = 0;
+    scoreCounterEl.textContent = &quot;0&quot;;
+    document.getElementById(&quot;results-screen&quot;).style.display = &quot;none&quot;;
+    document.getElementById(&quot;quiz-screen&quot;).style.display = &quot;block&quot;;
+    loadQuestion();
+  }
+
+  loadQuestion();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
